@@ -15,6 +15,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -83,7 +84,7 @@ public class QuerydslBasicTest {
     public void startQuerydsl() {
         //member1을 찾아라!
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
-        QMember m  = new QMember("m");
+        QMember m = new QMember("m");
 
         Member findMember = queryFactory
                 .select(m)
@@ -97,7 +98,7 @@ public class QuerydslBasicTest {
     @Test
     public void startQuerydsl2() {
         //member1을 찾아라!
-        QMember m  = new QMember("m");
+        QMember m = new QMember("m");
 
         Member findMember = queryFactory
                 .select(m)
@@ -135,7 +136,7 @@ public class QuerydslBasicTest {
     public void searchAndParam() {
         Member findMember = queryFactory
                 .selectFrom(member)
-                .where(member.username.eq("member1"),member.age.eq(10))
+                .where(member.username.eq("member1"), member.age.eq(10))
                 .fetchOne();
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
@@ -170,10 +171,7 @@ public class QuerydslBasicTest {
     }
 
     /**
-     * 회원 정렬 순서
-     * 1. 회원 나이 내림차순(desc)
-     * 2. 회원 이름 올림차순(asc)
-     * 단 2에서 회원 이름이 없으면 마지막에 출력(nulls last)
+     * 회원 정렬 순서 1. 회원 나이 내림차순(desc) 2. 회원 이름 올림차순(asc) 단 2에서 회원 이름이 없으면 마지막에 출력(nulls last)
      */
     @Test
     public void sort() {
@@ -223,13 +221,7 @@ public class QuerydslBasicTest {
     }
 
     /**
-     * JPQL
-     * select
-     *  COUNT(m),   //회원 수
-     *  SUM(m.age), //나이 합
-     *  AVG(m.age), //평균 나이
-     *  MAX(m.age), //최대 나이
-     *  MIN(m.age)  //최소 나이
+     * JPQL select COUNT(m),   //회원 수 SUM(m.age), //나이 합 AVG(m.age), //평균 나이 MAX(m.age), //최대 나이 MIN(m.age)  //최소 나이
      * from Member m
      */
     @Test
@@ -292,8 +284,7 @@ public class QuerydslBasicTest {
     }
 
     /**
-     * 세타 조인(연관관계가 없는 필드로 조인)
-     * 회원의 이름이 팀 이름과 같은 회원 조회
+     * 세타 조인(연관관계가 없는 필드로 조인) 회원의 이름이 팀 이름과 같은 회원 조회
      */
     @Test
     public void theta_join() {
@@ -312,10 +303,8 @@ public class QuerydslBasicTest {
     }
 
     /**
-     * 예) 회원과 팀을 조인하면서, 팀 이름이 teamA인 팀만 조인, 회원은 모두 조회
-     * JPQL: SELECT m, t FROM Member m LEFT JOIN m.team t on t.name = 'teamA'
-     * SQL: SELECT m.*, t.* FROM Member m LEFT JOIN Team t ON m.TEAM_ID=t.id and
-     t.name='teamA'
+     * 예) 회원과 팀을 조인하면서, 팀 이름이 teamA인 팀만 조인, 회원은 모두 조회 JPQL: SELECT m, t FROM Member m LEFT JOIN m.team t on t.name =
+     * 'teamA' SQL: SELECT m.*, t.* FROM Member m LEFT JOIN Team t ON m.TEAM_ID=t.id and t.name='teamA'
      */
     @Test
     public void join_on_filtering() {
@@ -331,10 +320,8 @@ public class QuerydslBasicTest {
     }
 
     /**
-     * 2. 연관관계 없는 엔티티 외부 조인
-     * 예) 회원의 이름과 팀의 이름이 같은 대상 외부 조인
-     * JPQL: SELECT m, t FROM Member m LEFT JOIN Team t on m.username = t.name
-     * SQL: SELECT m.*, t.* FROM Member m LEFT JOIN Team t ON m.username = t.name
+     * 2. 연관관계 없는 엔티티 외부 조인 예) 회원의 이름과 팀의 이름이 같은 대상 외부 조인 JPQL: SELECT m, t FROM Member m LEFT JOIN Team t on m.username
+     * = t.name SQL: SELECT m.*, t.* FROM Member m LEFT JOIN Team t ON m.username = t.name
      */
     @Test
     public void join_on_no_relation() {
@@ -416,7 +403,7 @@ public class QuerydslBasicTest {
                 .fetch();
 
         assertThat(result).extracting("age")
-                .containsExactly(30,40);
+                .containsExactly(30, 40);
     }
 
     /**
@@ -436,7 +423,7 @@ public class QuerydslBasicTest {
                 .fetch();
 
         assertThat(result).extracting("age")
-                .containsExactly(20, 30,40);
+                .containsExactly(20, 30, 40);
     }
 
     @Test
@@ -596,13 +583,13 @@ public class QuerydslBasicTest {
                                 JPAExpressions
                                         .select(memberSub.age.max())
                                         .from(memberSub), "age"))
-                        )
+                )
                 .from(member)
                 .fetch();
 
         for (UserDto userDto : result) {
             System.out.println("userDto = " + userDto);
-            }
+        }
     }
 
     @Test
@@ -628,10 +615,10 @@ public class QuerydslBasicTest {
 
     private List<Member> searchMember1(String usernameCond, Integer ageCond) {
         BooleanBuilder builder = new BooleanBuilder();
-        if(usernameCond != null) {
+        if (usernameCond != null) {
             builder.and(member.username.eq(usernameCond));
         }
-        if(ageCond != null) {
+        if (ageCond != null) {
             builder.and(member.age.eq(ageCond));
         }
         return queryFactory
@@ -698,5 +685,35 @@ public class QuerydslBasicTest {
                 .delete(member)
                 .where(member.age.gt(18))
                 .execute();
+    }
+
+    @Test
+    public void sqlFunction() {
+
+        List<String> result = queryFactory
+                .select(Expressions.stringTemplate(
+                        "function('replace', {0}, {1}, {2})",
+                        member.username, "member", "M"))
+                .from(member)
+                .fetch();
+
+        for (String s : result) {
+            System.out.println("s = " + s);
+        }
+    }
+
+    @Test
+    public void sqlFunction2() {
+        List<String> result = queryFactory
+                .select(member.username)
+                .from(member)
+                .where(member.username.eq(Expressions.stringTemplate("function('lower', {0})",
+                        member.username)))
+                //.where(member.username.eq(member.username.lower()))
+                .fetch();
+
+        for (String s : result) {
+            System.out.println("s = " + s);
+        }
     }
 }
