@@ -102,7 +102,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom{
                 .limit(pageable.getPageSize())
                 .fetchCount();
 
-        return new PageImpl<>(content, pageable, tatal)
+        return new PageImpl<>(content, pageable, total);
     }
 
     private BooleanExpression usernameEq(String username) {
